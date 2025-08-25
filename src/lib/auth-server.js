@@ -1,4 +1,3 @@
-// Parse Azure Static Web Apps principal header in Next.js Route Handlers
 export function getServerUser(headers) {
     const encoded = headers.get("x-ms-client-principal");
     if (!encoded) return null;
