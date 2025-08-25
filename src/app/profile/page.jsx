@@ -1,33 +1,46 @@
 "use client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { getUser } from "@/lib/getUser";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function ProfilePage() {
-    // Placeholder: later use Azure SWA Auth context
-    const user = {
-        name: "Guest User",
-        email: "guest@example.com",
-        provider: "Not signed in",
-    };
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        getUser().then(setUser);
+    }, []);
+
+    if (!user) {
+        return (
+            <main className="mx-auto max-w-xl p-6">
+                <h1 className="text-2xl font-bold mb-4">Profile</h1>
+                <p className="text-gray-600">You are not logged in.</p>
+                <p className="mt-2 text-sm text-gray-500">
+                    Please <a href="/.auth/login/github" className="underline">login with GitHub</a>
+                    {" "}or{" "}
+                    <a href="/.auth/login/aad" className="underline">Microsoft</a>.
+                </p>
+            </main>
+        );
+    }
 
     return (
         <main className="mx-auto max-w-xl p-6">
-            <h1 className="text-2xl font-bold mb-6">Profile</h1>
+            <h1 className="text-2xl font-bold mb-4">Profile</h1>
+
             <Card>
                 <CardHeader>
-                    <CardTitle>User Info</CardTitle>
+                    <CardTitle>User Information</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                    <p><b>Name:</b> {user.name}</p>
-                    <p><b>Email:</b> {user.email}</p>
-                    <p><b>Provider:</b> {user.provider}</p>
+                <CardContent>
+                    <p><b>User ID:</b> {user.userId}</p>
+                    <p><b>Email / Username:</b> {user.userDetails}</p>
+                    <p><b>Provider:</b> {user.identityProvider}</p>
+                    {user.userRoles?.length > 0 && (
+                        <p><b>Roles:</b> {user.userRoles.join(", ")}</p>
+                    )}
                 </CardContent>
             </Card>
-
-            <div className="mt-6 flex gap-4">
-                <Button variant="outline">Sign In</Button>
-                <Button variant="destructive">Sign Out</Button>
-            </div>
         </main>
     );
 }
