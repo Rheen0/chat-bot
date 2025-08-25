@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils"; 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { getUser } from "@/lib/getUser";
 
 export default function Navbar() {
     const pathname = usePathname();
@@ -14,6 +16,12 @@ export default function Navbar() {
         { href: "/history", label: "History" },
         { href: "/profile", label: "Profile" },
     ];
+
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        getUser().then(setUser);
+    }, []);
 
     return (
         <nav className="sticky top-0 z-50 w-full border-b bg-white/70 backdrop-blur-md">
@@ -40,9 +48,22 @@ export default function Navbar() {
                 </div>
 
                 {/* Auth Button (placeholder for now) */}
-                <Button size="sm" variant="outline">
-                    Sign In
-                </Button>
+                <div className="flex gap-2">
+                    {!user ? (
+                        <>
+                            <a href="/.auth/login/github">
+                                <Button variant="outline">Login with GitHub</Button>
+                            </a>
+                            <a href="/.auth/login/aad">
+                                <Button variant="outline">Login with Microsoft</Button>
+                            </a>
+                        </>
+                    ) : (
+                        <a href="/.auth/logout">
+                            <Button variant="destructive">Logout</Button>
+                        </a>
+                    )}
+                </div>
             </div>
         </nav>
     );
