@@ -9,7 +9,6 @@ export async function GET(req) {
 
     const principal = getServerUser(req.headers);
     if (!principal) {
-        // For UI simplicity, return 401 so the page shows "Please log in"
         return NextResponse.json({ history: [] }, { status: 401 });
     }
 
@@ -23,9 +22,9 @@ export async function GET(req) {
 
     for await (const e of iter) {
         history.push({
-            role: e.Role,
-            content: e.Content,
-            createdAt: e.CreatedAt ?? e.Timestamp, // fallback to server ts
+            role: e.role,
+            content: e.content,
+            createdAt: e.Timestamp, 
         });
     }
 
